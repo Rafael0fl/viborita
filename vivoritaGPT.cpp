@@ -7,6 +7,7 @@
 #include <string>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "Snake.h"
 
 using namespace std;
@@ -23,10 +24,10 @@ int main(){
 
     fullScreen();
     startGame(ancho_de_pantalla,alto_de_pantalla);
-    
+
     system("cls");
     cout<<"\n\n\t\tbye";
-    getch();
+    Sleep(500);
     return 0;
 }
 
@@ -56,7 +57,7 @@ void fullScreen(){
 /*--------------------------------------------------*/
 void startGame(int ancho,int alto){
     bool vivo = true;
-    int tecla;
+    int direccion = RIGHT;
     go(3,2);cout<<"PROYECTO VIBORITA";
     /*  creo la paredes que rodean  */
     divSnake paredes(3,ancho-3,3,alto-3);
@@ -65,10 +66,12 @@ void startGame(int ancho,int alto){
     snake Jugador(12,15);
     Jugador.print_snake();
     while (vivo==true){
-        if(kbhit()){
-            tecla = getch();
+       if(kbhit()){// recibe eventos de teclado para cambiar la direccion
+            direccion = getch(); 
+       }
+       else{// borra e imprime la vivorita moviendose
             Jugador.erase_snake();
-            switch(tecla){
+            switch (direccion){
                 case UP : 
                     Jugador.move(Jugador.getPositionX(),Jugador.getPositionY()-1);
                     break;
@@ -81,9 +84,11 @@ void startGame(int ancho,int alto){
                 case LEFT : 
                     Jugador.move(Jugador.getPositionX()-1,Jugador.getPositionY());
                     break;
-            }        
+            }
             Jugador.print_snake();
-        }
+            Sleep(200);
+       }
+        /* si la viborita choca las paredes del mapa */
         if(Jugador.getPositionX()==paredes.getRight()||Jugador.getPositionX()==paredes.getLeft()||Jugador.getPositionY()==paredes.getUP()||Jugador.getPositionY()==paredes.getDOWN()){
             vivo = false;
         }
