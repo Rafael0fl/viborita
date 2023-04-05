@@ -12,10 +12,10 @@
 
 using namespace std;
 /*--------------------------------------------------*/
-int sizeWidthMax();
-int sizeHeightMax();
-void fullScreen();
-void startGame(int,int);
+int sizeWidthMax();           // obtiene el ancho de la pantalla
+int sizeHeightMax();          // obtiene el alto de la pantalla
+void fullScreen();            // pone la consola en pantalla completa
+void startGame(int,int);      // inicia el juego
 /*--------------------------------------------------*/
 
 int main(){
@@ -27,7 +27,7 @@ int main(){
 
     system("cls");
     cout<<"\n\n\t\tbye";
-    Sleep(500);
+    Sleep(800);
     return 0;
 }
 
@@ -58,6 +58,7 @@ void fullScreen(){
 void startGame(int ancho,int alto){
     bool vivo = true;
     int direccion = RIGHT;
+    int ultima_direccion;
     go(3,2);cout<<"PROYECTO VIBORITA";
     /*  creo la paredes que rodean  */
     divSnake paredes(3,ancho-3,3,alto-3);
@@ -67,7 +68,14 @@ void startGame(int ancho,int alto){
     Jugador.print_snake();
     while (vivo==true){
        if(kbhit()){// recibe eventos de teclado para cambiar la direccion
-            direccion = getch(); 
+            fflush(stdin);
+            ultima_direccion = direccion;
+            fflush(stdin);
+            direccion = getch();
+            if(direccion!=UP && direccion!=DOWN && direccion!=RIGHT && direccion!=LEFT){
+                fflush(stdin);
+                direccion = ultima_direccion; // si no se presiona un direccional, se guarda la direccion anterior
+            }    
        }
        else{// borra e imprime la vivorita moviendose
             Jugador.erase_snake();
