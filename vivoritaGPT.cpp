@@ -59,14 +59,22 @@ void startGame(int ancho,int alto){
     bool vivo = true;
     int direccion = RIGHT;
     int ultima_direccion;
+
     go(3,2);cout<<"PROYECTO VIBORITA";
+
     /*  creo la paredes que rodean  */
     divSnake paredes(3,ancho-3,3,alto-3);
     paredes.print_div();
     /*  creo lo que movera el jugador  */
     snake Jugador(12,15);
-    Jugador.print_snake();
-    while (vivo==true){
+    /* creo la comida comun para la viborita*/
+    foodSnake comida;
+
+    /*  comienza el juego  */
+    Jugador.printSnake();
+    comida.generateFood(paredes);
+
+    while(vivo==true){
        if(kbhit()){// recibe eventos de teclado para cambiar la direccion
             fflush(stdin);
             ultima_direccion = direccion;
@@ -78,7 +86,7 @@ void startGame(int ancho,int alto){
             }    
        }
        else{// borra e imprime la vivorita moviendose
-            Jugador.erase_snake();
+            Jugador.eraseSnake();
             switch (direccion){
                 case UP : 
                     Jugador.move(Jugador.getPositionX(),Jugador.getPositionY()-1);
@@ -93,12 +101,17 @@ void startGame(int ancho,int alto){
                     Jugador.move(Jugador.getPositionX()-1,Jugador.getPositionY());
                     break;
             }
-            Jugador.print_snake();
+            Jugador.printSnake();
             Sleep(200);
        }
         /* si la viborita choca las paredes del mapa */
-        if(Jugador.getPositionX()==paredes.getRight()||Jugador.getPositionX()==paredes.getLeft()||Jugador.getPositionY()==paredes.getUP()||Jugador.getPositionY()==paredes.getDOWN()){
+        if(Jugador.getPositionX()==paredes.getRight()||Jugador.getPositionX()==paredes.getLeft()||Jugador.getPositionY()==paredes.getTop()||Jugador.getPositionY()==paredes.getBottom()){
             vivo = false;
+        }
+        /* si la viborita choca con la comida normal */
+        if(comida.collision(Jugador)==true){
+            comida.eraseFood();
+            comida.generateFood(paredes);
         }
     }
 }
