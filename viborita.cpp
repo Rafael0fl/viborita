@@ -56,7 +56,7 @@ void fullScreen(){
 }
 /*--------------------------------------------------*/
 void startGame(int ancho,int alto){
-    bool vivo = true;
+    //bool vivo = true;
     int direccion = RIGHT;
     int ultima_direccion;
 
@@ -64,17 +64,17 @@ void startGame(int ancho,int alto){
 
     /*  creo la paredes que rodean  */
     divSnake paredes(3,ancho-3,3,alto-3);
-    paredes.print_div();
     /*  creo lo que movera el jugador  */
-    snake Jugador(12,15);
+    snake Jugador(20,12,15);
     /* creo la comida comun para la viborita*/
     foodSnake comida;
 
     /*  comienza el juego  */
+    paredes.printDivSnake();
     Jugador.printSnake();
     comida.generateFood(paredes);
 
-    while(vivo==true){
+    while(true){
        if(kbhit()){// recibe eventos de teclado para cambiar la direccion
             fflush(stdin);
             ultima_direccion = direccion;
@@ -86,32 +86,37 @@ void startGame(int ancho,int alto){
             }    
        }
        else{// borra e imprime la vivorita moviendose
-            Jugador.eraseSnake();
+            if(Jugador.collisionWithCommonFood(comida)==true){
+                //Jugador.growUp();
+                comida.eraseFood();
+                comida.generateFood(paredes);
+            }
+            else Jugador.eraseSnake();
+
             switch (direccion){
                 case UP : 
-                    Jugador.move(Jugador.getPositionX(),Jugador.getPositionY()-1);
+                    Jugador.setPositionTail();
+                    Jugador.move(Jugador.getPositionHead('x'),Jugador.getPositionHead('y')-1);
                     break;
                 case DOWN : 
-                    Jugador.move(Jugador.getPositionX(),Jugador.getPositionY()+1);
+                    Jugador.setPositionTail();
+                    Jugador.move(Jugador.getPositionHead('x'),Jugador.getPositionHead('y')+1);
                     break;
                 case RIGHT :
-                    Jugador.move(Jugador.getPositionX()+1,Jugador.getPositionY());
+                    Jugador.setPositionTail();
+                    Jugador.move(Jugador.getPositionHead('x')+1,Jugador.getPositionHead('y'));
                     break;
                 case LEFT : 
-                    Jugador.move(Jugador.getPositionX()-1,Jugador.getPositionY());
+                    Jugador.setPositionTail();
+                    Jugador.move(Jugador.getPositionHead('x')-1,Jugador.getPositionHead('y'));
                     break;
             }
             Jugador.printSnake();
             Sleep(200);
        }
         /* si la viborita choca las paredes del mapa */
-        if(Jugador.getPositionX()==paredes.getRight()||Jugador.getPositionX()==paredes.getLeft()||Jugador.getPositionY()==paredes.getTop()||Jugador.getPositionY()==paredes.getBottom()){
-            vivo = false;
-        }
-        /* si la viborita choca con la comida normal */
-        if(comida.collision(Jugador)==true){
-            comida.eraseFood();
-            comida.generateFood(paredes);
+        if(Jugador.collisionWithDivSnake(paredes)==true){
+            break;
         }
     }
 }
